@@ -1,32 +1,30 @@
-name: Update Internships
+name: Auto Update Internship Database
 
-# Run every 30 minutes and allow manual trigger
 on:
   schedule:
-    - cron: "*/30 * * * *"  # every 30 minutes
-  workflow_dispatch:        # allows manual run
+    - cron: "*/60 * * * *"  # runs every 60 minutes
+  workflow_dispatch:         # lets you trigger manually from Actions tab
 
 jobs:
-  scrape:
+  update:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repo
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      # Step 2: Setup Python
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      # Step 3: Install dependencies
       - name: Install dependencies
-        run: pip install pandas supabase python-jobspy
+        run: |
+          pip install firebase-admin jobspy pandas python-dotenv
 
-      # Step 4: Run scraper
-      - name: Run scraper
+      - name: Run internship updater
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        run: python update_internships.py
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          echo "$FIREBASE_KEY" > firebase_credentials.json
+          python update_internships.py
