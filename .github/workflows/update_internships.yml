@@ -21,7 +21,8 @@ jobs:
       - name: Upgrade pip and install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install firebase-admin pandas python-dotenv jobspy --quiet
+          pip install firebase-admin pandas python-dotenv --quiet
+          pip install git+https://github.com/ryanmcdermott/jobspy.git@main --quiet
 
       - name: Run internship updater
         env:
