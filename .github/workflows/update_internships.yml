@@ -2,13 +2,13 @@ name: Auto Update Internships
 
 on:
   schedule:
+    # Runs every 6th minute of every hour
     - cron: "*/6 * * * *"
   workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,16 +21,20 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          pip install firebase-admin pandas python-dotenv jobspy --quiet
+          # FIX APPLIED HERE: Changed 'jobspy' to 'python-jobspy'
+          pip install firebase-admin pandas python-dotenv python-jobspy --quiet 
 
       - name: Verify jobspy installation
         run: |
-          pip show jobspy || echo "❌ jobspy not found"
+          # This 'pip show' will still fail for 'jobspy' (the old one) 
+          # but the import test will now pass for the correct module!
+          pip show python-jobspy || echo "❌ python-jobspy not found"
           python -c "import jobspy; print('✅ jobspy imported successfully!')"
 
       - name: Run internship updater
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
         run: |
-          echo "$FIREBASE_KEY" > firebase_credentials.json
+          # Use 'echo' with proper quoting and redirection for credentials
+          echo "${{ secrets.FIREBASE_KEY }}" > firebase_credentials.json
           python update_internships.py
