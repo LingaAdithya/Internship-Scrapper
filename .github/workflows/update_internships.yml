@@ -1,16 +1,16 @@
-name: Auto Update Internship Database
+name: Auto Update Internships
 
 on:
   schedule:
-    - cron: "*/60 * * * *"  # runs every 60 minutes
-  workflow_dispatch:         # lets you trigger manually from Actions tab
+    - cron: "*/6 * * * *"   # every 6 minutes
+  workflow_dispatch:         # allows manual trigger
 
 jobs:
   update:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -20,9 +20,14 @@ jobs:
 
       - name: Upgrade pip and install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install firebase-admin pandas python-dotenv --quiet
           pip install git+https://github.com/ryanmcdermott/jobspy.git@main --quiet
+
+      - name: Verify jobspy installation
+        run: |
+          pip show jobspy || echo "❌ jobspy not found"
+          python -c "import jobspy; print('✅ jobspy imported successfully!')"
 
       - name: Run internship updater
         env:
