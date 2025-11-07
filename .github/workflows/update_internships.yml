@@ -35,6 +35,12 @@ jobs:
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
         run: |
-          # Use 'echo' with proper quoting and redirection for credentials
-          echo "${{ secrets.FIREBASE_KEY }}" > firebase_credentials.json
+          # Use 'cat' with a Here Document (EOF) to safely write the multi-line JSON secret
+          cat << EOF > firebase_credentials.json
+          ${{ secrets.FIREBASE_KEY }}
+          EOF
+          
+          # You can optionally print the first few lines to verify (just for debugging, remove later!)
+          # head firebase_credentials.json
+          
           python update_internships.py
