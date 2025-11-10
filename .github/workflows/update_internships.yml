@@ -3,7 +3,7 @@ name: Auto Update Internships
 on:
   schedule:
     # Runs every 6th minute of every hour
-    - cron: "*/6 * * * *"
+    - cron: "*/360 * * * *"
   workflow_dispatch:
 
 jobs:
